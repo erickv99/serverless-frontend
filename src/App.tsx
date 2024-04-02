@@ -47,20 +47,24 @@ function App() {
                 selectProductHandler(product.id);
               }}
             >
-              {product.name}
+              {product.title}
             </li>
           );
         })}
       </ul>
       <div className="border-b-2"></div>
       <div className="flex justify-center">
-        {isLoading && <div>Loading....</div>}
+        {isLoading && (
+          <div className="animate-pulse w-96 flex flex-col bg-slate-800 text-white">
+            Loading....
+          </div>
+        )}
         {selectedProduct && !isLoading && (
           <div className="w-96">
-            <img src={selectedProduct.image} />
             <div className="flex flex-col bg-slate-800 text-white">
-              <h2>{selectedProduct.name}</h2>
+              <h2>{selectedProduct.title}</h2>
               <h2>${selectedProduct.price}</h2>
+              <h2>Stock: {selectedProduct.count}</h2>
             </div>
           </div>
         )}
