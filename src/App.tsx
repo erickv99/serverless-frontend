@@ -74,7 +74,11 @@ function App() {
       </ul>
       <div className="border-b-2"></div>
       <div className="flex justify-center">
-        {isLoading && <div>Loading....</div>}
+        {isLoading && (
+          <div className="animate-pulse w-96 flex flex-col bg-slate-800 text-white">
+            Loading....
+          </div>
+        )}
         {selectedProduct && !isLoading && (
           <div className="w-96">
             <div className="flex flex-col bg-slate-800 text-white">
