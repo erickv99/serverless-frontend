@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { getProducts, getProductsById } from './queries/products';
 import { twJoin } from 'tailwind-merge';
+import { uploadFile } from './mutations/upload';
 
 function App() {
   const [productList, setProductList] = useState<Array<Product>>([]);
@@ -29,6 +30,25 @@ function App() {
     }
   };
 
+  const fileUploadHandler = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event?.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    console.log(file.name);
+
+    const response = await uploadFile(file.name, file);
+    if (response) {
+      alert('File upload: success');
+    } else {
+      setError('Error uploading file');
+    }
+  };
+
   return (
     <div className="flex flex-col container space-y-2">
       <h1 className="text-3xl font-bold underline text-red-400">
@@ -47,7 +67,7 @@ function App() {
                 selectProductHandler(product.id);
               }}
             >
-              {product.name}
+              {product.title}
             </li>
           );
         })}
@@ -57,15 +77,28 @@ function App() {
         {isLoading && <div>Loading....</div>}
         {selectedProduct && !isLoading && (
           <div className="w-96">
-            <img src={selectedProduct.image} />
             <div className="flex flex-col bg-slate-800 text-white">
-              <h2>{selectedProduct.name}</h2>
-              <h2>${selectedProduct.price}</h2>
+              <h2>Name: {selectedProduct.title}</h2>
+              <h2>Price: ${selectedProduct.price}</h2>
+              <h2>Count: {selectedProduct.count ?? 0}</h2>
             </div>
           </div>
         )}
       </div>
       {error && <div className="text-xl text-red-600">{error}</div>}
+      <div className="border py-2">
+        <h2>Upload your CSV</h2>
+        <div className="flex flex-col justify-center items-center">
+          <label htmlFor="product">Product file</label>
+          <input
+            type="file"
+            name="product"
+            id="product"
+            multiple={false}
+            onChange={fileUploadHandler}
+          />
+        </div>
+      </div>
     </div>
   );
 }
