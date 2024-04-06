@@ -1,3 +1,7 @@
+# Deployed URL
+
+https://d1gsz2pixpaq08.cloudfront.net/
+
 # serverless-frontend
 
 # React + TypeScript + Vite
