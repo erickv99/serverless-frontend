@@ -2,7 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import { uploadFile } from '../api';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 export default function UploadCsv() {
+  const [file, setFile] = useState<File | null>(null);
   const mUpload = useMutation({
     mutationFn: uploadFile,
     onSuccess: () => {
@@ -16,23 +18,18 @@ export default function UploadCsv() {
   ) => {
     const file = event?.target.files?.[0];
 
+    if (!file || !file.type.includes('csv')) {
+      setFile(null);
+      return;
+    }
+
+    setFile(file);
+  };
+
+  const submitHandler = () => {
     if (!file) {
       return;
     }
-
-    if (!file.type.includes('csv')) {
-      return;
-    }
-    console.log(file);
-  };
-
-  const submitHandler = (event: React.SyntheticEvent) => {
-    event.preventDefault();
-
-    const target = event.target as typeof event.target & {
-      products: { value: File };
-    };
-    const file = target.products.value;
     mUpload.mutate({
       fileName: file.name,
       file,
@@ -42,7 +39,7 @@ export default function UploadCsv() {
   return (
     <div className="border py-2">
       <h2>Upload your CSV</h2>
-      <form
+      <div
         className="flex flex-col justify-center items-center"
         onSubmit={submitHandler}
       >
@@ -55,13 +52,17 @@ export default function UploadCsv() {
           multiple={false}
           onChange={fileUploadHandler}
         />
-        <Button type="submit" disabled={mUpload.isPending}>
+        <Button
+          type="button"
+          onClick={submitHandler}
+          disabled={mUpload.isPending}
+        >
           {mUpload.isPending && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
           Upload
         </Button>
-      </form>
+      </div>
     </div>
   );
 }
