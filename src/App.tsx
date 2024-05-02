@@ -1,75 +1,33 @@
-import { useEffect, useState } from 'react';
+import { Outlet, NavLink } from 'react-router-dom';
 import './App.css';
-import { getProducts, getProductsById } from './queries/products';
-import { twJoin } from 'tailwind-merge';
 
 function App() {
-  const [productList, setProductList] = useState<Array<Product>>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
-  const [error, setError] = useState<string | undefined>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    (async () => {
-      const products = await getProducts();
-      setProductList(products);
-    })();
-  }, []);
-
-  const selectProductHandler = async (productId: number) => {
-    try {
-      setIsLoading(true);
-      const product = await getProductsById(productId);
-      setSelectedProduct(product);
-      setError(undefined);
-    } catch (error) {
-      setError('Something went wrong');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="flex flex-col container space-y-2">
-      <h1 className="text-3xl font-bold underline text-red-400">
-        Hello world!
-      </h1>
-      <ul className="flex flex-col space-y-2">
-        {productList.map((product) => {
-          return (
-            <li
-              key={product.id}
-              className={twJoin(
-                'hover:underline cursor-pointer',
-                selectedProduct?.id === product.id ? 'underline' : ''
-              )}
-              onClick={() => {
-                selectProductHandler(product.id);
-              }}
+      <div className="flex justify-between">
+        <h1 className="text-3xl font-bold underline text-red-400">
+          Hello world!
+        </h1>
+        <ul className="flex space-x-2">
+          <li>
+            <NavLink
+              to={`/`}
+              className={({ isActive }) => (isActive ? 'underline' : '')}
             >
-              {product.title}
-            </li>
-          );
-        })}
-      </ul>
-      <div className="border-b-2"></div>
-      <div className="flex justify-center">
-        {isLoading && (
-          <div className="animate-pulse w-96 flex flex-col bg-slate-800 text-white">
-            Loading....
-          </div>
-        )}
-        {selectedProduct && !isLoading && (
-          <div className="w-96">
-            <div className="flex flex-col bg-slate-800 text-white">
-              <h2>{selectedProduct.title}</h2>
-              <h2>${selectedProduct.price}</h2>
-              <h2>Stock: {selectedProduct.count}</h2>
-            </div>
-          </div>
-        )}
+              Products
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) => (isActive ? 'underline' : '')}
+              to={`/upload`}
+            >
+              Upload
+            </NavLink>
+          </li>
+        </ul>
       </div>
-      {error && <div className="text-xl text-red-600">{error}</div>}
+      <Outlet />
     </div>
   );
 }
