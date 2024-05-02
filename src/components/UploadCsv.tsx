@@ -3,13 +3,23 @@ import { uploadFile } from '../api';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { useToast } from './ui/use-toast';
 export default function UploadCsv() {
+  const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const mUpload = useMutation({
     mutationFn: uploadFile,
     onSuccess: () => {
-      // Invalidate and refetch
-      //   queryClient.invalidateQueries({ queryKey: ['todos'] });
+      toast({
+        title: 'Products uploaded',
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast({
+        title: 'Error!',
+        description: 'Something went wrong',
+      });
     },
   });
 
