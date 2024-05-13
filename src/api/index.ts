@@ -19,33 +19,32 @@ export const getProductsById = async (productId: number) => {
 };
 
 export const getSignedUrl = async (fileName: string) => {
-  try {
-    const response = await fetch(`${APIS.import}/${fileName}`);
+  const credentials = localStorage.getItem('authorization_token') ?? '';
+  const token = btoa(credentials);
+
+  const response = await fetch(`${APIS.import}/${fileName}`, {
+    headers: { Authorization: `Basic ${token}` },
+  });
+  if (response.ok) {
     const json = await response.json();
     return json.url;
-  } catch (error) {
-    throw new Error('Error getting signedUrl');
+  } else {
+    throw response;
   }
 };
 
-export const uploadFile = async (payload: {
-  fileName: string;
-  file: File;
-}): Promise<boolean> => {
+export const uploadFile = async (payload: { fileName: string; file: File }) => {
   const signedUrl = await getSignedUrl(payload.fileName);
 
-  try {
-    await fetch(signedUrl, {
-      method: 'PUT',
-      body: payload.file,
-      headers: {
-        'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="${payload.fileName}"`,
-      },
-    });
-    return true;
-  } catch (error) {
-    console.log('uploadFile', error);
-    return false;
+  const response = await fetch(signedUrl, {
+    method: 'PUT',
+    body: payload.file,
+    headers: {
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${payload.fileName}"`,
+    },
+  });
+  if (!response.ok) {
+    throw response;
   }
 };

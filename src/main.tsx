@@ -25,6 +25,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: '/upload',
+    element: <UploadCsv />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
