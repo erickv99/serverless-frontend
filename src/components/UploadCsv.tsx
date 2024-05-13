@@ -14,11 +14,15 @@ export default function UploadCsv() {
         title: 'Products uploaded',
       });
     },
-    onError: (error) => {
-      console.error(error.message);
+    onError: (error: any) => {
+      let description = 'Something went wrong';
+      if (error.status === 401 || error.status === 403) {
+        console.error(error);
+        description = 'Unauthorized';
+      }
       toast({
         title: 'Error!',
-        description: 'Something went wrong',
+        description,
       });
     },
   });
