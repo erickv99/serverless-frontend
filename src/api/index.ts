@@ -23,7 +23,9 @@ export const getSignedUrl = async (fileName: string) => {
   const token = btoa(credentials);
 
   const response = await fetch(`${APIS.import}/${fileName}`, {
-    headers: { Authorization: `Basic ${token}` },
+    headers: {
+      Authorization: `Basic ${token}`,
+    },
   });
   if (response.ok) {
     const json = await response.json();
