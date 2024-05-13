@@ -15,7 +15,7 @@ export default function UploadCsv() {
       });
     },
     onError: (error) => {
-      console.error(error);
+      console.error(error.message);
       toast({
         title: 'Error!',
         description: 'Something went wrong',
